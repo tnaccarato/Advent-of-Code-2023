@@ -21,11 +21,15 @@ def sum_first_last_digit(file_path):
         for line in file:
             # Finds all the numbers
             nums = re.findall(r'(?=([0-9]|one|two|three|four|five|six|seven|eight|nine))', line)
+            # Assigns variables to first and last
             first = numbers.get(nums[0], nums[0])
             last = numbers.get(nums[-1], nums[-1])
+            # Adds the integer value of the first and last digit of the line concatenated to the total_sum
             total_sum += int(first + last)
 
+    # After looping through all the lines, returns the total_sum
     return total_sum
+
 
 # Example usage
 print(sum_first_last_digit("input.txt"))
