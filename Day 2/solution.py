@@ -8,15 +8,46 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"""
 
 
 def possible_games_sum(string):
+    # Gets a dictionary of the maximum colours of each game
+    game_max_colours = get_max_colours(string)
+
+    # Initialises a sum of the game IDs
+    id_sum = 0
+
+    # If the maximum colours in the game are less than or equal to the values given, adds the ID to the sum
+    for game, max_colours in game_max_colours.items():
+        if (
+                max_colours["red"] <= 12 and
+                max_colours["green"] <= 13 and
+                max_colours["blue"] <= 14
+        ):
+            id_sum += game
+
+    # Returns the sum of the ids after loop completes
+    return id_sum
+
+
+def sum_minimum_game_powers(string):
+    game_max_colours = get_max_colours(string)
+
+    # Initialises a sum of the game powers
+    power_sum = 0
+    # For each game sum, finds the power of the set and adds it to the sum
+    for game, max_colours in game_max_colours.items():
+        power = max_colours["red"] * max_colours["blue"] * max_colours["green"]
+        power_sum += power
+
+    # Returns the sum of the powers of each game
+    return power_sum
+
+
+def get_max_colours(string):
     # Splits the input into lines
     games = string.split("\n")
-
     # Defines a regex pattern to match the game number and then match everything after the colon
     pattern = r'Game (\d+): (.+?)(?=Game|$)'
-
     # Declares a dictionary storing the rounds
     game_max_colours = {}
-
     # Extracts the game number and the rounds
     for game in games:
         match = re.search(pattern, game)
@@ -39,23 +70,14 @@ def possible_games_sum(string):
 
             # Adds the max values to the game dictionary
             game_max_colours[game_number] = max_colours
+    return game_max_colours
 
-    # Initialises a sum of the game IDs
-    id_sum = 0
 
-    # If the maximum colours in the game are less than or equal to the values given, adds the ID to the sum
-    for game, max_colours in game_max_colours.items():
-        if (
-                max_colours["red"] <= 12 and
-                max_colours["green"] <= 13 and
-                max_colours["blue"] <= 14
-        ):
-            id_sum += game
-
-    # Returns the sum of the ids after loop completes
-    return id_sum
-
+# Testing examples
+# print(possible_games_sum(example))
+# print(sum_minimum_game_powers(example))
 
 with open("input.txt", "r") as input_text:
     input_text = input_text.read()
-    print(possible_games_sum(input_text))
+    # print(possible_games_sum(input_text))
+    print(sum_minimum_game_powers(input_text))
