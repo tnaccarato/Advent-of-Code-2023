@@ -47,9 +47,8 @@ def possible_games_sum(string):
     for game, max_colours in game_max_colours.items():
         if max_colours["red"] <= 12 and max_colours["green"] <= 13 and max_colours["blue"] <= 14:
             id_sum += game
-        else:
-            id_sum = id_sum
 
+    # Returns the sum of the ids after loop completes
     return id_sum
 
 
