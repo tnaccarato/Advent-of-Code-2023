@@ -33,24 +33,29 @@ humidity-to-location map:
 56 93 4"""
 
 
-def lowest_location_number(input_string):
-    # Splits the input string into categories
-    input_string = input_string.split("\n\n")
+def lowest_location_number(string):
+    string = string.split("\n\n")
+
+    # Parsing seed ranges
+    seed_ranges = string[0][7:].split(" ")
+    seeds = []
+    for i in range(0, len(seed_ranges), 2):
+        start, length = int(seed_ranges[i]), int(seed_ranges[i + 1])
+        seeds.extend(range(start, start + length))
 
     # Declares variables for storing a list each of the categories
-    seeds = [int(seed) for seed in input_string[0][7:].split(" ")]
-    seed_to_soil = [[int(num) for num in row.split(" ")] for row in input_string[1].split("\n")[1:]]
-    soil_to_fert = [[int(num) for num in row.split(" ")] for row in input_string[2].split("\n")[1:]]
-    fert_to_water = [[int(num) for num in row.split(" ")] for row in input_string[3].split("\n")[1:]]
-    water_to_light = [[int(num) for num in row.split(" ")] for row in input_string[4].split("\n")[1:]]
-    light_to_temp = [[int(num) for num in row.split(" ")] for row in input_string[5].split("\n")[1:]]
-    temp_to_humid = [[int(num) for num in row.split(" ")] for row in input_string[6].split("\n")[1:]]
-    humid_to_loc = [[int(num) for num in row.split(" ")] for row in input_string[7].split("\n")[1:]]
+    seed_to_soil = [[int(num) for num in row.split(" ")] for row in string[1].split("\n")[1:]]
+    soil_to_fert = [[int(num) for num in row.split(" ")] for row in string[2].split("\n")[1:]]
+    fert_to_water = [[int(num) for num in row.split(" ")] for row in string[3].split("\n")[1:]]
+    water_to_light = [[int(num) for num in row.split(" ")] for row in string[4].split("\n")[1:]]
+    light_to_temp = [[int(num) for num in row.split(" ")] for row in string[5].split("\n")[1:]]
+    temp_to_humid = [[int(num) for num in row.split(" ")] for row in string[6].split("\n")[1:]]
+    humid_to_loc = [[int(num) for num in row.split(" ")] for row in string[7].split("\n")[1:]]
 
     # Declares a set for storing the location numbers
     location_numbers = set()
 
-    # Loops through the seeds, getting the location number
+    # Calculate location numbers for all seeds
     for seed in seeds:
         soil = convert_number(seed, seed_to_soil)
         fertilizer = convert_number(soil, soil_to_fert)
@@ -64,7 +69,6 @@ def lowest_location_number(input_string):
     return min(location_numbers)
 
 
-
 def convert_number(number, mapping):
     for destination_start, source_start, range_length in mapping:
         # Check if the number is within the current source range
@@ -76,6 +80,8 @@ def convert_number(number, mapping):
     # If the number does not fall within any source range, it maps to itself
     return number
 
+
 with open("input.txt", "r") as input_string:
     input_string = input_string.read()
+    # print(lowest_location_number(example))
     print(lowest_location_number(input_string))
