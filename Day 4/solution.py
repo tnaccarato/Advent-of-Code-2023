@@ -1,5 +1,5 @@
 import re
-from collections import deque
+from collections import defaultdict
 
 example = """Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
 Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
@@ -41,28 +41,40 @@ def total_scratchcards(input_string):
     for line in input_string.split("\n"):
         match = re.search(pattern, line)
         if match:
-            winning_numbers = [int(num) for num in match.group(1).split()]
-            chosen_numbers = [int(num) for num in match.group(2).split()]
-            cards_data.append((winning_numbers, chosen_numbers))
+            winning_numbers = set(int(num) for num in match.group(1).split())
+            chosen_numbers = set(int(num) for num in match.group(2).split())
+            matches = len(winning_numbers.intersection(chosen_numbers))
+            cards_data.append(matches)
+
+    # Initialize counters for total cards and cards to be processed
+    total_cards = len(cards_data)
+    cards_to_process = defaultdict(int)  # Dict to store the number of times each card needs to be processed
+
+    # Initial population of the cards_to_process dictionary
+    for i, matches in enumerate(cards_data):
+        for j in range(1, matches + 1):
+            if i + j < len(cards_data):
+                cards_to_process[i + j] += 1
 
     # Process the cards
-    total_cards = 0
-    queue = deque(range(len(cards_data)))
+    i = 0
+    while i < len(cards_data):
+        # If this card needs to be processed
+        if cards_to_process[i] > 0:
+            total_cards += cards_to_process[i]  # Add the number of copies
+            matches = cards_data[i]
 
-    while queue:
-        card_index = queue.popleft()
-        total_cards += 1  # Count this card
-        winning_numbers, chosen_numbers = cards_data[card_index]
+            # Schedule further copies based on matches
+            for j in range(1, matches + 1):
+                if i + j < len(cards_data):
+                    cards_to_process[i + j] += cards_to_process[i]
 
-        # Count matches
-        matches = sum(num in winning_numbers for num in chosen_numbers)
+            cards_to_process[i] = 0  # Reset the counter for this card
 
-        # Enqueue subsequent cards based on matches
-        for i in range(1, matches + 1):
-            next_card = card_index + i
-            if next_card < len(cards_data):
-                queue.append(next_card)
+        i += 1
+
     return total_cards
+
 
 with open("input.txt", "r") as input_text:
     input_text = input_text.read()
